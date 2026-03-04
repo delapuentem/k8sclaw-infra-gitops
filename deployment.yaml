@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sympozium
+  namespace: k8sclaw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sympozium
+  template:
+    metadata:
+      labels:
+        app: sympozium
+    spec:
+      serviceAccountName: sympozium-sa
+      containers:
+      - name: agent
+        image: ghcr.io/k8sclaw/sympozium:latest
+        env:
+        - name: OLLAMA_ENDPOINT
+          # Esta es la URL interna que apunta a tu Pod en el Worker 2
+          value: "http://ollama-service.ollama.svc.cluster.local:11434/v1"
+        - name: MODEL_NAME
+          value: "llama3.2"
+        - name: LOG_LEVEL
+          value: "info"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
