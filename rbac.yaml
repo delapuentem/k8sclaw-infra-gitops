@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sympozium-sa
+  namespace: k8sclaw
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sympozium-read-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "events", "nodes", "namespaces", "services"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sympozium-read-binding
+subjects:
+- kind: ServiceAccount
+  name: sympozium-sa
+  namespace: k8sclaw
+roleRef:
+  kind: ClusterRole
+  name: sympozium-read-role
+  apiGroup: rbac.authorization.k8s.io
